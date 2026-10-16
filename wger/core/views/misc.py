@@ -22,6 +22,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as django_login
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
@@ -40,12 +41,14 @@ logger = logging.getLogger(__name__)
 # ************************
 def index(request):
     """
-    Index page
+    Index page: the dashboard for logged-in users, an app-style welcome screen
+    for everybody else
     """
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('core:dashboard'))
-    else:
-        return HttpResponseRedirect(reverse('software:features'))
+
+    context = {'allow_guest_users': settings.WGER_SETTINGS['ALLOW_GUEST_USERS']}
+    return render(request, 'welcome.html', context)
 
 
 def demo_entries(request):

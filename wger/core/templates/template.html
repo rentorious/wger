@@ -25,7 +25,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="content-language" content="{{ i18n_language.code }}">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
     <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/png">
     <link rel="manifest" href="/manifest.webmanifest">
@@ -50,6 +50,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'fontawesomefree/css/all.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'node/@wger-project/react-components/build/assets/index.css' %}" id="react-css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/language-menu.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mobile-app.css' %}">
 
     <script src="{% static 'node/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'node/htmx.org/dist/htmx.min.js' %}"></script>
@@ -63,12 +64,15 @@
 
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body>
+<body{% if user.is_authenticated %} class="is-app"{% endif %}>
 
 {#            #}
 {# Navigation #}
 {#            #}
 {% include 'navigation.html' %}
+{% if user.is_authenticated %}
+    {% include 'navigation_mobile.html' %}
+{% endif %}
 
 
 {#              #}

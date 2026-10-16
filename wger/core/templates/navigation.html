@@ -2,11 +2,12 @@
 <nav class="navbar navbar-expand-md bg-primary">
     <div class="container-fluid">
         <div class="container-lg" style="display: flex;">
-            <a class="navbar-brand" href="{% url 'core:index' %}">
+            <a class="navbar-brand {% if user.is_authenticated %}mx-auto mx-md-0{% endif %}" href="{% url 'core:index' %}">
                 <img src="{% static 'images/logos/logo-bg-white.png' %}" style="width: 38px;"
                      alt="wger logo">
             </a>
-            <button class="navbar-toggler"
+            {# Logged-in phone users navigate with the bottom tab bar (navigation_mobile.html) #}
+            <button class="navbar-toggler {% if user.is_authenticated %}d-none{% endif %}"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#main-navbar-navigation"
@@ -335,78 +336,7 @@
                                 {#                #}
                                 {# Administration #}
                                 {#                #}
-                                {% if user.userprofile.has_exercise_permission or perms.gym.manage_gyms or perms.gym.manage_gym or perms.gym.gym_trainer %}
-                                    <li class="dropdown-divider"></li>
-                                    <li class="dropdown-header">{% translate "Administration" %}</li>
-                                    {% if perms.core.change_language %}
-                                        <li>
-                                            <a class="dropdown-item"
-                                               href="{% url 'core:language:overview' %}">
-                                                {% translate "Languages" %}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                    {% if perms.core.change_license %}
-                                        <li>
-                                            <a class="dropdown-item"
-                                               href="{% url 'core:license:list' %}">
-                                                {% translate "Licenses" %}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                    {% if perms.core.change_repetitionunit %}
-                                        <li>
-                                            <a class="dropdown-item"
-                                               href="{% url 'core:repetition-unit:list' %}">
-                                                {% translate "Repetition units" %}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                    {% if perms.core.change_weightunit %}
-                                        <li>
-                                            <a class="dropdown-item"
-                                               href="{% url 'core:weight-unit:list' %}">
-                                                {% translate "Weight units" %}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                    {% if perms.gym.manage_gyms %}
-                                        <li>
-                                            <a class="dropdown-item"
-                                               href="{% url 'core:user:list' %}">
-                                                {% translate "User list" %}
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item"
-                                               href="{% url 'gym:gym:list' %}">
-                                                {% translate "Gyms" %}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-
-                                    {# it's not possible to group expressions '(a or b) and c' #}
-                                    {% if perms.gym.gym_trainer or perms.gym.manage_gym %}
-                                        {% if user.userprofile.gym %}
-                                            <li>
-                                                <a class="dropdown-item"
-                                                   href="{% url 'gym:gym:user-list' user.userprofile.gym.pk %}">
-                                                    {{ user.userprofile.gym }}
-                                                </a>
-                                            </li>
-                                        {% endif %}
-                                    {% endif %}
-
-                                    {% if perms.trophies.change_trophy %}
-                                        <li>
-                                            <a class="dropdown-item"
-                                               href="{% url 'trophies:admin-overview' %}">
-                                                {% translate "Trophies" %}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-
-                                {% endif %}
+                                {% include "navigation_admin_items.html" with item_class="dropdown-item" header_class="dropdown-header" divider_class="dropdown-divider" %}
                             </ul>
                         </li>
                     </ul>

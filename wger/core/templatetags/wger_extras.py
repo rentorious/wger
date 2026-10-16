@@ -19,6 +19,7 @@ from functools import lru_cache
 
 # Django
 from django import template
+from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -117,6 +118,29 @@ def format_username(user):
         return user.email
     else:
         return user.username
+
+
+# First URL segment (after the language prefix) -> tab of the mobile bottom bar
+MOBILE_TABS = {
+    'dashboard': 'home',
+    'routine': 'workouts',
+    'nutrition': 'food',
+    'weight': 'progress',
+    'measurement': 'progress',
+    'gallery': 'progress',
+}
+
+
+@register.filter
+def mobile_tab(path):
+    """
+    Returns the key of the mobile bottom bar tab a URL path belongs to, or an
+    empty string if it belongs to none (e.g. /en/routine/5/view -> 'workouts')
+    """
+    segments = [s for s in path.split('/') if s]
+    if segments and segments[0] in {code for code, _name in settings.LANGUAGES}:
+        segments = segments[1:]
+    return MOBILE_TABS.get(segments[0], '') if segments else ''
 
 
 @lru_cache(maxsize=1)

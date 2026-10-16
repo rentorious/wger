@@ -1,0 +1,177 @@
+{% load i18n wger_extras %}
+{% comment %}
+    Bottom tab bar and "More" sheet for logged-in users on phones. Hidden from
+    the md breakpoint on, where the regular navbar (navigation.html) is used.
+{% endcomment %}
+{% with current_tab=request.path|mobile_tab %}
+    <nav class="app-tabbar fixed-bottom d-md-none" aria-label="{% translate 'Main navigation' %}">
+        <a href="{% url 'core:dashboard' %}"
+           class="app-tab {% if current_tab == 'home' %}active{% endif %}"
+           {% if current_tab == 'home' %}aria-current="page"{% endif %}>
+            <span class="{% fa_class 'home' fixed_width=False %}"></span>
+            <span class="app-tab-label">{% translate "Home" %}</span>
+        </a>
+        <a href="{% url 'manager:routine:overview' %}"
+           class="app-tab {% if current_tab == 'workouts' %}active{% endif %}"
+           {% if current_tab == 'workouts' %}aria-current="page"{% endif %}>
+            <span class="{% fa_class 'dumbbell' fixed_width=False %}"></span>
+            <span class="app-tab-label">{% translate "Workouts" %}</span>
+        </a>
+        <a href="{% url 'nutrition:plan:overview' %}"
+           class="app-tab {% if current_tab == 'food' %}active{% endif %}"
+           {% if current_tab == 'food' %}aria-current="page"{% endif %}>
+            <span class="{% fa_class 'utensils' fixed_width=False %}"></span>
+            <span class="app-tab-label">{% translate "Food" %}</span>
+        </a>
+        <a href="{% url 'weight:overview' %}"
+           class="app-tab {% if current_tab == 'progress' %}active{% endif %}"
+           {% if current_tab == 'progress' %}aria-current="page"{% endif %}>
+            <span class="{% fa_class 'chart-line' fixed_width=False %}"></span>
+            <span class="app-tab-label">{% translate "Progress" %}</span>
+        </a>
+        <button type="button"
+                class="app-tab"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#app-more"
+                aria-controls="app-more">
+            <span class="{% fa_class 'bars' fixed_width=False %}"></span>
+            <span class="app-tab-label">{% translate "More" %}</span>
+        </button>
+    </nav>
+{% endwith %}
+
+<div class="offcanvas offcanvas-bottom app-more d-md-none" tabindex="-1" id="app-more"
+     aria-labelledby="app-more-title">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="app-more-title">{{ user|format_username }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                aria-label="{% translate 'Close' %}"></button>
+    </div>
+    <div class="offcanvas-body pt-0">
+        <ul class="app-more-list">
+            {% if user.userprofile.is_temporary %}
+                {% if allow_registration %}
+                    <li>
+                        <a class="app-more-item fw-bold" href="{% url 'core:user:registration' %}">
+                            <span class="{% fa_class 'user-plus' %}"></span>
+                            {% translate "Register" %}
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a class="app-more-item" href="{% url 'core:user:login' %}">
+                        <span class="{% fa_class 'sign-in-alt' %}"></span>
+                        {% translate "Login" %}
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="app-more-header">{% translate "Training" %}</li>
+            <li>
+                <a class="app-more-item" href="{% url 'manager:routine:calendar' %}" rel="nofollow">
+                    <span class="{% fa_class 'calendar-alt' %}"></span>
+                    {% translate "Calendar" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="{% url 'measurements:overview' %}" rel="nofollow">
+                    <span class="{% fa_class 'ruler' %}"></span>
+                    {% translate "Measurements" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="{% url 'gallery:images:overview' %}" rel="nofollow">
+                    <span class="{% fa_class 'images' %}"></span>
+                    {% translate "Gallery" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="{% url 'trophies:overview' %}" rel="nofollow">
+                    <span class="{% fa_class 'trophy' %}"></span>
+                    {% translate "Trophies" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="{% url 'exercise:exercise:overview' %}">
+                    <span class="{% fa_class 'running' %}"></span>
+                    {% translate "Exercises" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="{% url 'manager:template:overview' %}" rel="nofollow">
+                    <span class="{% fa_class 'clipboard-list' %}"></span>
+                    {% translate "Your templates" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="{% url 'manager:template:public' %}" rel="nofollow">
+                    <span class="{% fa_class 'globe' %}"></span>
+                    {% translate "Public templates" %}
+                </a>
+            </li>
+
+            <li class="app-more-header">{% translate "Nutrition" %}</li>
+            <li>
+                <a class="app-more-item" href="{% url 'nutrition:bmi:view' %}" rel="nofollow">
+                    <span class="{% fa_class 'calculator' %}"></span>
+                    {% translate "BMI calculator" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="{% url 'nutrition:calories:view' %}" rel="nofollow">
+                    <span class="{% fa_class 'fire' %}"></span>
+                    {% translate "Daily calories calculator" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="{% url 'nutrition:ingredient:list' %}">
+                    <span class="{% fa_class 'carrot' %}"></span>
+                    {% translate "Ingredient overview" %}
+                </a>
+            </li>
+
+            <li class="app-more-header">{% translate "Account" %}</li>
+            {% if not user.userprofile.is_temporary %}
+                <li>
+                    <a class="app-more-item" href="{% url 'core:user:preferences' %}">
+                        <span class="{% fa_class 'user-cog' %}"></span>
+                        {% translate "My preferences" %}
+                    </a>
+                </li>
+            {% endif %}
+            {% if not trainer_identity %}
+                <li>
+                    <form method="post" action="{% url 'account_logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="app-more-item">
+                            <span class="{% fa_class 'sign-out-alt' %}"></span>
+                            {% translate "Logout" %}
+                        </button>
+                    </form>
+                </li>
+            {% endif %}
+
+            {% include "navigation_admin_items.html" with item_class="app-more-item" header_class="app-more-header" divider_class="d-none" %}
+
+            <li class="app-more-header">{% translate "About this software" %}</li>
+            <li>
+                <a class="app-more-item" href="{% url 'software:about-us' %}">
+                    <span class="{% fa_class 'info-circle' %}"></span>
+                    {% translate "Support & Get Involved" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="{% url 'software:api' %}">
+                    <span class="{% fa_class 'code' %}"></span>
+                    {% translate "REST API" %}
+                </a>
+            </li>
+            <li>
+                <a class="app-more-item" href="https://github.com/wger-project/wger">
+                    <span class="{% fa_class 'github' 'fab' %}"></span>
+                    {% translate "Get the code" %} (Github)
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
