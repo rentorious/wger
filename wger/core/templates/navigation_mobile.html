@@ -43,7 +43,13 @@
 <div class="offcanvas offcanvas-bottom app-more d-md-none" tabindex="-1" id="app-more"
      aria-labelledby="app-more-title">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="app-more-title">{{ user|format_username }}</h5>
+        <h5 class="offcanvas-title text-truncate" id="app-more-title">
+            {% if user.userprofile.is_temporary %}
+                {% translate "Guest account" %}
+            {% else %}
+                {{ user|format_username }}
+            {% endif %}
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
                 aria-label="{% translate 'Close' %}"></button>
     </div>
